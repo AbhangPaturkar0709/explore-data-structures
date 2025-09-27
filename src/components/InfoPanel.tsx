@@ -1,0 +1,253 @@
+import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useVisualizationStore } from "@/store/visualizationStore";
+import { cn } from "@/lib/utils";
+
+const algorithmInfo = {
+  'bubble-sort': {
+    title: 'Bubble Sort',
+    description: 'A simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.',
+    timeComplexity: {
+      best: 'O(n)',
+      average: 'O(n²)',
+      worst: 'O(n²)'
+    },
+    spaceComplexity: 'O(1)',
+    pseudoCode: [
+      'for i = 0 to n-2 do',
+      '  for j = 0 to n-2-i do',
+      '    if array[j] > array[j+1] then',
+      '      swap(array[j], array[j+1])',
+      '    end if',
+      '  end for',
+      'end for'
+    ]
+  },
+  'array-insert': {
+    title: 'Array Insertion',
+    description: 'Insert an element at a specific position in an array, shifting existing elements to make room.',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)'
+    },
+    spaceComplexity: 'O(1)',
+    pseudoCode: [
+      'function insert(array, index, element)',
+      '  for i = array.length down to index do',
+      '    array[i+1] = array[i]',
+      '  end for',
+      '  array[index] = element',
+      '  return array',
+      'end function'
+    ]
+  },
+  'binary-search': {
+    title: 'Binary Search',
+    description: 'An efficient algorithm for searching a sorted array by repeatedly dividing the search interval in half.',
+    timeComplexity: {
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)'
+    },
+    spaceComplexity: 'O(1)',
+    pseudoCode: [
+      'function binarySearch(array, target)',
+      '  left = 0, right = array.length - 1',
+      '  while left <= right do',
+      '    mid = (left + right) / 2',
+      '    if array[mid] == target then return mid',
+      '    else if array[mid] < target then left = mid + 1',
+      '    else right = mid - 1',
+      '  end while',
+      '  return -1',
+      'end function'
+    ]
+  }
+};
+
+interface InfoPanelProps {
+  className?: string;
+}
+
+export const InfoPanel: React.FC<InfoPanelProps> = ({ className }) => {
+  const { selectedOperation, currentExplanation, currentCodeLine } = useVisualizationStore();
+
+  const getAlgorithmInfo = () => {
+    if (!selectedOperation) return null;
+    return algorithmInfo[selectedOperation as keyof typeof algorithmInfo] || {
+      title: selectedOperation.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      description: 'Algorithm description coming soon...',
+      timeComplexity: { best: 'TBD', average: 'TBD', worst: 'TBD' },
+      spaceComplexity: 'TBD',
+      pseudoCode: ['// Pseudo-code coming soon...']
+    };
+  };
+
+  const info = getAlgorithmInfo();
+
+  return (
+    <motion.div 
+      className={cn("h-80 border-t border-border bg-card", className)}
+      initial={{ y: 320 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
+    >
+      <div className="h-full p-4">
+        <Tabs defaultValue="description" className="h-full">
+          <TabsList className="grid w-full grid-cols-4 mb-4">
+            <TabsTrigger value="description">Description</TabsTrigger>
+            <TabsTrigger value="explanation">Live Explanation</TabsTrigger>
+            <TabsTrigger value="pseudocode">Pseudo-code</TabsTrigger>
+            <TabsTrigger value="complexity">Complexity</TabsTrigger>
+          </TabsList>
+
+          <div className="h-[calc(100%-60px)]">
+            <TabsContent value="description" className="h-full">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle className="gradient-primary bg-clip-text text-transparent">
+                    {info?.title || 'Select an Algorithm'}
+                  </CardTitle>
+                  <CardDescription>
+                    {info?.description || 'Choose an algorithm or data structure operation from the sidebar to see its description.'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {!selectedOperation ? (
+                    <div className="flex items-center justify-center h-32 text-muted-foreground">
+                      <p>Select an operation to view its description</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-medium mb-2">Key Characteristics:</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1">
+                          <li>• {info?.description}</li>
+                          <li>• Space efficient: {info?.spaceComplexity}</li>
+                          <li>• Implementation difficulty: Beginner to Intermediate</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="explanation" className="h-full">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Live Explanation</CardTitle>
+                  <CardDescription>
+                    Step-by-step explanation of what's happening in the current visualization
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-32 flex items-center justify-center">
+                    {currentExplanation ? (
+                      <motion.p 
+                        className="text-center"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        key={currentExplanation}
+                      >
+                        {currentExplanation}
+                      </motion.p>
+                    ) : (
+                      <p className="text-muted-foreground text-center">
+                        Start a visualization to see step-by-step explanations here
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="pseudocode" className="h-full">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Pseudo-code</CardTitle>
+                  <CardDescription>
+                    Algorithm implementation with highlighted current execution
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="font-mono text-sm bg-muted/30 p-4 rounded-md h-32 overflow-y-auto">
+                    {info?.pseudoCode.map((line, index) => (
+                      <motion.div
+                        key={index}
+                        className={cn(
+                          "py-0.5 px-2 rounded transition-smooth",
+                          currentCodeLine === index && "bg-accent text-accent-foreground font-medium"
+                        )}
+                        animate={{
+                          backgroundColor: currentCodeLine === index ? 'hsl(var(--accent))' : 'transparent'
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <span className="text-muted-foreground mr-3">{index + 1}</span>
+                        {line}
+                      </motion.div>
+                    )) || (
+                      <p className="text-muted-foreground">Select an algorithm to see its pseudo-code</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="complexity" className="h-full">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Complexity Analysis</CardTitle>
+                  <CardDescription>
+                    Time and space complexity breakdown
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {info ? (
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="font-medium mb-3">Time Complexity</h4>
+                        <div className="flex gap-4">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="bg-success/10 text-success border-success/20">
+                              Best: {info.timeComplexity.best}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
+                              Average: {info.timeComplexity.average}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
+                              Worst: {info.timeComplexity.worst}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-medium mb-3">Space Complexity</h4>
+                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20">
+                          {info.spaceComplexity}
+                        </Badge>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-32 text-muted-foreground">
+                      <p>Select an algorithm to view complexity analysis</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
+    </motion.div>
+  );
+};

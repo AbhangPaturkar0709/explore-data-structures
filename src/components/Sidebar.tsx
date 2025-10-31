@@ -118,6 +118,7 @@ const dsaTopics: TopicNode[] = [
           { id: "insertion-sort", label: "Insertion Sort", isOperation: true },
           { id: "merge-sort", label: "Merge Sort", isOperation: true },
           { id: "quick-sort", label: "Quick Sort", isOperation: true },
+          { id: "heap-sort", label: "Heap Sort", isOperation: true },
         ]
       },
       {
@@ -127,6 +128,7 @@ const dsaTopics: TopicNode[] = [
         children: [
           { id: "linear-search", label: "Linear Search", isOperation: true },
           { id: "binary-search", label: "Binary Search", isOperation: true },
+          { id: "jump-search", label: "Jump Search", isOperation: true },
         ]
       },
       {

@@ -4,69 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useVisualizationStore } from "@/store/visualizationStore";
 import { cn } from "@/lib/utils";
-
-const algorithmInfo = {
-  'bubble-sort': {
-    title: 'Bubble Sort',
-    description: 'A simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.',
-    timeComplexity: {
-      best: 'O(n)',
-      average: 'O(n²)',
-      worst: 'O(n²)'
-    },
-    spaceComplexity: 'O(1)',
-    pseudoCode: [
-      'for i = 0 to n-2 do',
-      '  for j = 0 to n-2-i do',
-      '    if array[j] > array[j+1] then',
-      '      swap(array[j], array[j+1])',
-      '    end if',
-      '  end for',
-      'end for'
-    ]
-  },
-  'array-insert': {
-    title: 'Array Insertion',
-    description: 'Insert an element at a specific position in an array, shifting existing elements to make room.',
-    timeComplexity: {
-      best: 'O(1)',
-      average: 'O(n)',
-      worst: 'O(n)'
-    },
-    spaceComplexity: 'O(1)',
-    pseudoCode: [
-      'function insert(array, index, element)',
-      '  for i = array.length down to index do',
-      '    array[i+1] = array[i]',
-      '  end for',
-      '  array[index] = element',
-      '  return array',
-      'end function'
-    ]
-  },
-  'binary-search': {
-    title: 'Binary Search',
-    description: 'An efficient algorithm for searching a sorted array by repeatedly dividing the search interval in half.',
-    timeComplexity: {
-      best: 'O(1)',
-      average: 'O(log n)',
-      worst: 'O(log n)'
-    },
-    spaceComplexity: 'O(1)',
-    pseudoCode: [
-      'function binarySearch(array, target)',
-      '  left = 0, right = array.length - 1',
-      '  while left <= right do',
-      '    mid = (left + right) / 2',
-      '    if array[mid] == target then return mid',
-      '    else if array[mid] < target then left = mid + 1',
-      '    else right = mid - 1',
-      '  end while',
-      '  return -1',
-      'end function'
-    ]
-  }
-};
+import { algorithmInfo } from "@/data/algorithmInfo";
 
 interface InfoPanelProps {
   className?: string;
@@ -77,12 +15,12 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({ className }) => {
 
   const getAlgorithmInfo = () => {
     if (!selectedOperation) return null;
-    return algorithmInfo[selectedOperation as keyof typeof algorithmInfo] || {
-      title: selectedOperation.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-      description: 'Algorithm description coming soon...',
-      timeComplexity: { best: 'TBD', average: 'TBD', worst: 'TBD' },
-      spaceComplexity: 'TBD',
-      pseudoCode: ['// Pseudo-code coming soon...']
+    return algorithmInfo[selectedOperation] || {
+      title: selectedOperation.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      description: 'Select an operation from the sidebar to see its details.',
+      timeComplexity: { best: 'O(?)', average: 'O(?)', worst: 'O(?)' },
+      spaceComplexity: 'O(?)',
+      pseudoCode: ['// Implementation details']
     };
   };
 

@@ -1,7 +1,18 @@
 import { useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useVisualizationStore } from "@/store/visualizationStore";
 import { cn } from "@/lib/utils";
+import {
+  SortingVisualization,
+  ArrayVisualization,
+  StackVisualization,
+  QueueVisualization,
+  LinkedListVisualization,
+  TreeVisualization,
+  HashTableVisualization,
+  GraphVisualization,
+  GenericVisualization
+} from "./visualizations";
 
 interface CanvasProps {
   className?: string;
@@ -49,19 +60,44 @@ export const VisualizationCanvas: React.FC<CanvasProps> = ({ className }) => {
       );
     }
 
-    // Render different visualizations based on the selected operation
-    switch (selectedOperation) {
-      case 'bubble-sort':
-      case 'selection-sort':
-      case 'insertion-sort':
-        return <SortingVisualization data={currentStepData} />;
-      case 'array-insert':
-      case 'array-delete':
-      case 'array-access':
-        return <ArrayVisualization data={currentStepData} />;
-      default:
-        return <GenericVisualization data={currentStepData} />;
+    // Route to appropriate visualization based on operation type
+    if (selectedOperation.includes('sort')) {
+      return <SortingVisualization data={currentStepData} />;
     }
+    
+    if (selectedOperation.includes('search') && !selectedOperation.includes('hash')) {
+      return <ArrayVisualization data={currentStepData} />;
+    }
+    
+    if (selectedOperation.startsWith('array-')) {
+      return <ArrayVisualization data={currentStepData} />;
+    }
+    
+    if (selectedOperation.startsWith('stack-')) {
+      return <StackVisualization data={currentStepData} />;
+    }
+    
+    if (selectedOperation.startsWith('queue-')) {
+      return <QueueVisualization data={currentStepData} />;
+    }
+    
+    if (selectedOperation.startsWith('ll-')) {
+      return <LinkedListVisualization data={currentStepData} />;
+    }
+    
+    if (selectedOperation.startsWith('bst-') || selectedOperation.startsWith('tree-')) {
+      return <TreeVisualization data={currentStepData} />;
+    }
+    
+    if (selectedOperation.startsWith('hash-')) {
+      return <HashTableVisualization data={currentStepData} />;
+    }
+    
+    if (['bfs', 'dfs', 'dijkstra'].includes(selectedOperation)) {
+      return <GraphVisualization data={currentStepData} />;
+    }
+
+    return <GenericVisualization data={currentStepData} />;
   };
 
   return (

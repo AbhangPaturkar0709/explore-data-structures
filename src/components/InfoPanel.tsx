@@ -18,6 +18,7 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({ className }) => {
     return algorithmInfo[selectedOperation] || {
       title: selectedOperation.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
       description: 'Select an operation from the sidebar to see its details.',
+      detailedNotes: 'Detailed notes for this operation will be available soon.',
       timeComplexity: { best: 'O(?)', average: 'O(?)', worst: 'O(?)' },
       spaceComplexity: 'O(?)',
       pseudoCode: ['// Implementation details']
@@ -35,8 +36,9 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({ className }) => {
     >
       <div className="h-full p-4">
         <Tabs defaultValue="description" className="h-full">
-          <TabsList className="grid w-full grid-cols-4 mb-4">
+          <TabsList className="grid w-full grid-cols-5 mb-4">
             <TabsTrigger value="description">Description</TabsTrigger>
+            <TabsTrigger value="notes">Detailed Notes</TabsTrigger>
             <TabsTrigger value="explanation">Live Explanation</TabsTrigger>
             <TabsTrigger value="pseudocode">Pseudo-code</TabsTrigger>
             <TabsTrigger value="complexity">Complexity</TabsTrigger>
@@ -68,6 +70,32 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({ className }) => {
                           <li>• Implementation difficulty: Beginner to Intermediate</li>
                         </ul>
                       </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="notes" className="h-full">
+              <Card className="h-full overflow-y-auto">
+                <CardHeader>
+                  <CardTitle>Detailed Educational Notes</CardTitle>
+                  <CardDescription>
+                    Comprehensive explanation with use cases and applications
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {info?.detailedNotes ? (
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      {info.detailedNotes.split('\n\n').map((paragraph, index) => (
+                        <p key={index} className="mb-3 text-sm leading-relaxed whitespace-pre-line">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-32 text-muted-foreground">
+                      <p>Select an algorithm to view detailed notes</p>
                     </div>
                   )}
                 </CardContent>
